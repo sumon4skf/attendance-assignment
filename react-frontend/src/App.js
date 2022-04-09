@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+
+import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import './scss/app.scss';
+import Routing from "./Routing";
+import Header from "./components/header/Header";
+import Footer from "./components/footer/Footer";
 
 function App() {
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // refetchOnMount: false,
+        refetchOnMount: true,
+        refetchOnWindowFocus: false,
+        // refetchInterval: 15,
+      },
+    },
+  });
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Header />
+        <div className="container">
+          <Routing />
+        </div>
+        <Footer />
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
 export default App;
+
+// rafce
