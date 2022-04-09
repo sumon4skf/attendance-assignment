@@ -17,3 +17,6 @@ React Frontend Demo
 
 Vue Frontend Demo
 - [demo](https://vue.sumontech.com).
+
+## Emaple Excel download
+- [download from here](https://ibcs-assignment.sumontech.com/assets/attendance.xlsx).
