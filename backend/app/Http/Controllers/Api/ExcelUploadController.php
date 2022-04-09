@@ -46,7 +46,9 @@ class ExcelUploadController extends Controller
     $search_id = request('id', null);
     $page = request('page', 1);
     $limit = request('limit', 5);
-    $offset = ($page - 1) * $limit;
+    $offset = $limit == 'all' ? 0 : ($page - 1) * $limit;
+    $limit = $limit == 'all' ? 50000 : $limit;
+
     $query = $search_id ?  Attendance::where('emp_id', 'like', "%{$search_id}%")->offset($offset) : Attendance::offset($offset);
     $attendances = $query->limit($limit)->get();
     $total = $search_id ? Attendance::where('emp_id', 'like', "%{$search_id}%")->count() : Attendance::count();

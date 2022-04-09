@@ -4,6 +4,9 @@ import { useAttendanceReport, useDownloadExcel } from '../../../api/apiForm';
 import PagePaginator from '../../../pagination/PagePaginator';
 import moment from 'moment';
 import TableComponent from './TableComponent';
+import '../../../fonts/SolaimanLipi-normal.js';
+import jsPDF from "jspdf";
+import 'jspdf-autotable';
 
 
 function useQuery() {
@@ -14,28 +17,35 @@ function ExcelReport(props) {
   const { start, end } = props;
   const history = useHistory();
   const [search, setSearch] = useState();
+  const [limit, setLimit] = useState(10);
 
   let query = useQuery();
   let page = query.get("page");
   let id = query.get("id");
   page = page ? parseInt(page) : 1;
 
-  const { data, isLoading } = useAttendanceReport(id, page);
-  const download = useDownloadExcel(id, page);
+  const { data, isLoading } = useAttendanceReport(id, limit, page);
 
   useEffect(() => {
-    if (search) {
-      history.push(`?id=${search}&page=${page}`);
-    } else {
-      history.push(`?page=${page}`);
+    let pushUrl = '/';
+    if (limit) {
+      if (search) {
+        pushUrl = `?id=${search}&limit=${limit}`;
+      } else {
+        pushUrl = `?limit=${limit}`;
+      }
     }
-  }, [search]);
+    history.push(pushUrl);
+
+    console.log('limit', limit);
+
+  }, [search, limit]);
 
   const handlePaginationClick = (data) => {
     if (id) {
-      history.push(`?id=${id}&page=${data.selected + 1}`);
+      history.push(`?id=${id}&page=${data.selected + 1}&limit=${limit}`);
     } else {
-      history.push(`?page=${data.selected + 1}`);
+      history.push(`?page=${data.selected + 1}&limit=${limit}`);
     }
   };
 
@@ -46,7 +56,33 @@ function ExcelReport(props) {
   const genOut = end ? moment(end, 'h:mma') : null;
 
   const jsPdfDownLoadAction = () => {
-
+    const doc = new jsPDF();
+    doc.setFont('SolaimanLipi'); // set custom font (SolaimanLipi)
+    doc.setFontSize(12); // set font size 10
+    doc.text('Attendance Report', 15, 10)
+    doc.autoTable({
+      theme: 'grid',
+      styles: {
+        font: 'SolaimanLipi'
+      },
+      columnStyles: () => {
+        return { 0: { align: 'center', fillColor: [0, 255, 0] } }
+      },
+      columns: [
+        { title: "Month", dataKey: "month" },
+        { title: "Date", dataKey: "date" },
+        { title: "Day", dataKey: "day" },
+        { title: "ID", dataKey: "emp_id" },
+        { title: "Name", dataKey: "emp_name" },
+        { title: "Department", dataKey: "department" },
+        { title: "In Time", dataKey: "first_in_time" },
+        { title: "Out Time", dataKey: "last_out_time" },
+        { title: "Hours", dataKey: "hours_of_work" }
+      ],
+      body: attendances,
+      includeHiddenHtml: true
+    })
+    doc.save("attendance.pdf");
   }
 
   return (
@@ -59,6 +95,17 @@ function ExcelReport(props) {
                 <button type="button" onClick={() => jsPdfDownLoadAction()} className="btn btn-block btn-primary">
                   PDF Download
                 </button>
+              </div>
+              <div className="col-md-2">
+                <div className="form-group">
+                  <select name="limit" value={limit} onChange={(e) => setLimit(e.target.value)} className="form-control">
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                    <option value="all">All</option>
+                  </select>
+                </div>
               </div>
               <div className="col-md-4">
                 <div className="form-group">
@@ -80,7 +127,10 @@ function ExcelReport(props) {
             />
 
             <div className="navigation">
-              <PagePaginator currentPage={page} handlePaginationClick={handlePaginationClick} totalPage={totalPage} />
+              {
+                totalPage > 1 &&
+                <PagePaginator currentPage={page} handlePaginationClick={handlePaginationClick} totalPage={totalPage} />
+              }
             </div>
           </div>
         </div>

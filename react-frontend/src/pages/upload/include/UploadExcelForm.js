@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { useUploadExcelFile } from '../../../api/apiForm';
 import swal from "sweetalert";
 
+
 function UploadExcelForm() {
   const history = useHistory();
   const [file, setFile] = useState();
@@ -63,7 +64,7 @@ function UploadExcelForm() {
                 <small id="excel_file" className="form-text text-muted">
                   Upload an Excel file like the example are given
                 </small>
-                <a href="/Download Example">Download Example</a>
+                <a href={`/assets/attendance.xlsx`} download="example-excel.xlsx" className="mt-3">Download Example</a>
               </div>
               <div className="form-group">
                 {
