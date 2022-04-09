@@ -21,8 +21,9 @@ return [
 
   'allowed_origins' => [
     'http://localhost:3000',
-    'http://*.sumontech.com',
-    'https://*.sumontech.com',
+    'http://localhost:3000/',
+    'http://localhost:8082',
+    'http://localhost:8082/',
   ],
 
   'allowed_origins_patterns' => [],
