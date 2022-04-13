@@ -49,7 +49,8 @@ class ExcelUploadController extends Controller
     $offset = $limit == 'all' ? 0 : ($page - 1) * $limit;
     $limit = $limit == 'all' ? 50000 : $limit;
 
-    $query = $search_id ?  Attendance::where('emp_id', 'like', "%{$search_id}%")->offset($offset) : Attendance::offset($offset);
+    $query = $search_id ?  Attendance::where('emp_id', 'like', "%{$search_id}%")
+      ->offset($offset) : Attendance::offset($offset);
     $attendances = $query->limit($limit)->orderByDesc('id')->get();
     $total = $search_id ? Attendance::where('emp_id', 'like', "%{$search_id}%")->count() : Attendance::count();
     $totalPage = round($total / $limit);
