@@ -38,4 +38,8 @@ class CreateAttendancesTable extends Migration
   {
     Schema::dropIfExists('attendances');
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 1ae97c911cf933a4398c98841e76ad9a31499ab0
